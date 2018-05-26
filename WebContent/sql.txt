@@ -1,0 +1,107 @@
+CREATE TABLE user
+(
+    `userID`        VARCHAR(20)    NOT NULL, 
+    `userPassword`  VARCHAR(20)    NULL, 
+    `userName`      VARCHAR(20)    NULL, 
+    `userEmail`     VARCHAR(50)    NULL, 
+    `userDept`      VARCHAR(50)    NULL        COMMENT '부서', 
+    `userLevel`     VARCHAR(50)    NULL        COMMENT '직급', 
+    `birth`         VARCHAR(50)    NULL, 
+    `org`           VARCHAR(45)    NULL        COMMENT '소속', 
+    `available`     int            NULL        COMMENT '0-재직,1-퇴사', 
+    PRIMARY KEY (userID)
+);
+
+
+
+CREATE TABLE linkFile
+(
+    `linkFileID`    INT             NOT NULL    AUTO_INCREMENT, 
+    `objectLink`    VARCHAR(45)     NULL, 
+    `objectLinkPK`  VARCHAR(45)     NULL, 
+    `fileName`      VARCHAR(100)    NULL, 
+    `realFileName`  VARCHAR(100)    NULL, 
+    `filePath`      VARCHAR(100)    NULL, 
+    `downloadCnt`   INT             NULL, 
+    PRIMARY KEY (linkFileID)
+);
+
+
+CREATE TABLE auditHistory
+(
+    `auditHistoryID`  INT             NOT NULL    AUTO_INCREMENT, 
+    `projectID`       INT             NULL, 
+    `projectName`     VARCHAR(200)    NULL, 
+    `auditYearMonth`  VARCHAR(100)    NULL, 
+    `auditName`       VARCHAR(200)    NULL, 
+    `mainClient`      VARCHAR(100)    NULL, 
+    `mainDivision`    VARCHAR(100)    NULL, 
+    `auditField`      VARCHAR(100)    NULL, 
+    `auditRole`       VARCHAR(100)    NULL, 
+    `joinRate`        VARCHAR(100)    NULL, 
+    `userID`          VARCHAR(20)     NULL, 
+    `auditStartDate`  DATETIME        NULL        COMMENT '신규', 
+    `auditEndDate`    DATETIME        NULL        COMMENT '신규', 
+    PRIMARY KEY (auditHistoryID)
+);
+
+ALTER TABLE auditHistory COMMENT '감리경력';
+
+ALTER TABLE `kca21`.`auditHistory` 
+CHANGE COLUMN `auditStartDate` `auditStartDate` VARCHAR(50) NULL DEFAULT NULL ;
+
+ALTER TABLE `kca21`.`auditHistory` 
+CHANGE COLUMN `auditEndDate` `auditEndDate` VARCHAR(50) NULL DEFAULT NULL ;
+
+CREATE TABLE career
+(
+    `careerID`       INT             NOT NULL    AUTO_INCREMENT, 
+    `userID`         VARCHAR(20)     NULL, 
+    `period`         VARCHAR(100)    NULL, 
+    `careerDesc`     VARCHAR(1000)    NULL, 
+    `task`           VARCHAR(1000)    NULL, 
+    `similarCareer`  VARCHAR(100)    NULL        COMMENT '유사 경력의 근거', 
+    PRIMARY KEY (careerID)
+);
+
+ALTER TABLE career COMMENT '사업경험';
+
+
+
+CREATE TABLE certi
+(
+    `certiID`        INT             NOT NULL    AUTO_INCREMENT, 
+    `userID`         VARCHAR(20)     NULL, 
+    `certiName`      VARCHAR(100)    NULL, 
+    `issuer`         VARCHAR(100)    NULL, 
+    `certiDivision`  VARCHAR(100)    NULL, 
+    `certiField`     VARCHAR(100)    NULL, 
+    PRIMARY KEY (certiID)
+);
+
+ALTER TABLE certi COMMENT '자격정보';
+
+
+CREATE TABLE edu
+(
+    `eduID`      INT             NOT NULL    AUTO_INCREMENT, 
+    `userID`     VARCHAR(20)     NULL, 
+    `eduDesc`    VARCHAR(200)    NULL, 
+    `eduTime`    VARCHAR(10)     NULL, 
+    `eduPeriod`  VARCHAR(100)    NULL, 
+    `eduAgency`  VARCHAR(100)    NULL, 
+    PRIMARY KEY (eduID)
+);
+
+ALTER TABLE edu COMMENT '교육이수';
+
+ALTER TABLE `kca21`.`user` 
+ADD COLUMN `manager` VARCHAR(1) NULL AFTER `available`;
+
+
+
+//유사 사업 감리 검색
+SELECT b.userName,a.auditHistoryID,a.auditYearMonth,a.auditName,a.mainClient,a.mainDivision,a.auditField,a.auditRole,a.joinRate
+FROM auditHistory a left outer join user b
+on a.userid = b.userid
+where a.auditName like '%서울%';
