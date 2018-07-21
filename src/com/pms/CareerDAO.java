@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import com.pms.Career;
+import com.user.UserDAO;
 
 public class CareerDAO {
 
@@ -48,6 +49,10 @@ public ArrayList<Career> getList( String userid){
 				career.setCareerdesc(rs.getString(4));
 				career.setTask(rs.getString(5));
 				career.setSimilarcareer(rs.getString(6));
+				career.setBiz(rs.getString(7));
+				career.setApp(rs.getString(8));
+				career.setDb(rs.getString(9));
+				career.setArchi(rs.getString(10));
 				
 				list.add(career);
 			}
@@ -67,13 +72,13 @@ public ArrayList<Career> getList( String userid){
 
 
 //insert(엑셀)
-	public int insertExcel(String userID, String period, String careerDesc, String task,String similarCareer) {
+	public int insertExcel(String userID, String period, String careerDesc, String task,String similarCareer,String biz, String app, String db, String archi) {
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-		String SQL = "INSERT INTO career(userID, period ,careerDesc,task,similarCareer)  VALUES (?, ? ,?, ?, ? )";
+		String SQL = "INSERT INTO career(userID, period ,careerDesc,task,similarCareer,biz,app,db,archi)  VALUES (?, ? ,?, ?, ?,?,?,?,? )";
 		
 		try {
 			conn = ds.getConnection();
@@ -83,6 +88,10 @@ public ArrayList<Career> getList( String userid){
 			pstmt.setString(3, careerDesc);
 			pstmt.setString(4, task);
 			pstmt.setString(5, similarCareer);
+			pstmt.setString(6, biz);
+			pstmt.setString(7, app);
+			pstmt.setString(8, db);
+			pstmt.setString(9, archi);
 			
 			return pstmt.executeUpdate();
 			
@@ -106,7 +115,7 @@ public ArrayList<Career> getList( String userid){
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-		String SQL = "SELECT a.careerID,a.userID,a.period, a.careerDesc,a.task,a.similarCareer "
+		String SQL = "SELECT a.careerID,a.userID,a.period, a.careerDesc,a.task,a.similarCareer,a.biz,a.app,a.db,a.archi "
 				+"	FROM career a left outer join user b"
 				+" on a.userID = b.userID"
 				+" where a.careerID = ?";
@@ -125,6 +134,10 @@ public ArrayList<Career> getList( String userid){
 				career.setCareerdesc(rs.getString(4));
 				career.setTask(rs.getString(5));
 				career.setSimilarcareer(rs.getString(6));
+				career.setBiz(rs.getString(7));
+				career.setApp(rs.getString(8));
+				career.setDb(rs.getString(9));
+				career.setArchi(rs.getString(10));
 				
 				return career;
 				
@@ -143,11 +156,11 @@ public ArrayList<Career> getList( String userid){
 		return null;//
 	}
 	
-	public int update(int careerID, String careerdesc, String period, String task,String similarcareer) {
+	public int update(int careerID, String careerdesc, String period, String task,String similarcareer,String biz, String app, String db, String archi, String userID ) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String SQL = "UPDATE career SET careerDesc = ? , period = ? , task = ?, similarCareer = ? "
+		String SQL = "UPDATE career SET careerDesc = ? , period = ? , task = ?, similarCareer = ?, biz = ?, app = ?, db = ?, archi = ? "
 				+ " WHERE careerID = ?";
 				
 		try {
@@ -159,7 +172,12 @@ public ArrayList<Career> getList( String userid){
 			pstmt.setString(2, period);
 			pstmt.setString(3, task);
 			pstmt.setString(4, similarcareer);
-			pstmt.setInt(5, careerID);
+			pstmt.setString(5, biz);
+			pstmt.setString(6, app);
+			pstmt.setString(7, db);
+			pstmt.setString(8, archi);
+			
+			pstmt.setInt(9, careerID);
 			
 			return  pstmt.executeUpdate();
 			
@@ -167,6 +185,9 @@ public ArrayList<Career> getList( String userid){
 			e.printStackTrace();
 		}finally {
 			try {
+				UserDAO userDAO = new UserDAO();
+				userDAO.update(userID);// user 업데이트 날짜 변경
+				
 				if(rs!=null) rs.close();
 				if(pstmt !=null) pstmt.close();
 				if(conn!=null) conn.close();
@@ -206,6 +227,72 @@ public ArrayList<Career> getList( String userid){
 		return -1;//데이터베이스 오류
 		
 	}
+	
+	
+public ArrayList<Career> likeSearchList(String search){
+		
+		ArrayList<Career> list = new ArrayList<Career>();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		
+		
+		// 쿼리문 바꾸기.
+		String SQL = "SELECT b.userName,a.careerID,a.userID,a.period, a.careerDesc,a.task,a.similarCareer,a.biz,a.app,a.db,a.archi  "
+				+"	FROM career a left outer join user b "
+				+" on a.userid = b.userid"
+				+" where careerDesc like ? "
+				+"	or biz like  ? "
+				+"	or app like  ? "
+				+"	or db like  ? "
+				+"	or archi like  ? " ;
+		
+		
+		
+		try {
+			conn = ds.getConnection();
+			pstmt  = conn.prepareStatement(SQL);
+			pstmt.setString(1, "%"+search+"%");
+			pstmt.setString(2, "%"+search+"%");
+			pstmt.setString(3, "%"+search+"%");
+			pstmt.setString(4, "%"+search+"%");
+			pstmt.setString(5, "%"+search+"%");
+			
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				Career career = new Career();
+				
+				career.setUsername(rs.getString(1));
+				career.setCareerid(rs.getInt(2));
+				career.setUserid(rs.getString(3));
+				career.setPeriod(rs.getString(4));
+				career.setCareerdesc(rs.getString(5));
+				career.setTask(rs.getString(6));
+				career.setSimilarcareer(rs.getString(7));
+				career.setBiz(rs.getString(8));
+				career.setApp(rs.getString(9));
+				career.setDb(rs.getString(10));
+				career.setArchi(rs.getString(11));
+				
+				list.add(career);
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn!=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return list;//
+	}
+	
+	
 	
 	
 	

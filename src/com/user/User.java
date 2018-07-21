@@ -26,8 +26,53 @@ public class User {
     
     //  Y-관리권한
     private String manager;
+    
+    //  감리원번호
+    private String  auditno;
+    
+    public String getCnt() {
+		return cnt;
+	}
 
-    public String getManager() {
+	public void setCnt(String cnt) {
+		this.cnt = cnt;
+	}
+
+	public String getEdu() {
+		return edu;
+	}
+
+	public void setEdu(String edu) {
+		this.edu = edu;
+	}
+
+	//  감리횟수 - 아우터 조인으로 가져옴
+    private String  cnt;
+    
+    //  총교육시간 - 아우터 조인으로 가져옴
+    private String  edu;
+    
+    //  업데이트 시간
+    private String  updatedate;
+    
+
+    public String getUpdatedate() {
+		return updatedate;
+	}
+
+	public void setUpdatedate(String updatedate) {
+		this.updatedate = updatedate;
+	}
+
+	public String getAuditno() {
+		return auditno;
+	}
+
+	public void setAuditno(String auditno) {
+		this.auditno = auditno;
+	}
+
+	public String getManager() {
 		return manager;
 	}
 

@@ -14,9 +14,7 @@
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script src="js/bootstrap.js"></script>
+
 <link rel="stylesheet" href="ttps://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
@@ -28,13 +26,6 @@
 
 <%
 
-String search = "";// 시험 종목
-if(request.getParameter("search")!=null && request.getParameter("search")!=""){
-    search = request.getParameter("search");
-    //System.out.println("search========="+ search);
-    
-}
-
 if((String) session.getAttribute("userID") == null){ // 세션아이디가 없으면 메인페이지로 돌려보냄.
     
     PrintWriter script = response.getWriter();
@@ -42,6 +33,13 @@ if((String) session.getAttribute("userID") == null){ // 세션아이디가 없�
     script.println("alert(' 로그인을 하세요.')");
     script.println("location.href = 'main.jsp'");
     script.println("</script>");
+}
+
+String search = "";// 검색어
+if(request.getParameter("search")!=null && request.getParameter("search")!=""){
+    search = request.getParameter("search");
+    //System.out.println("search========="+ search);
+    
 }
 
 if(request.getParameter("search")==null || request.getParameter("search")==""){

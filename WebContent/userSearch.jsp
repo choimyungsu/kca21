@@ -115,6 +115,10 @@ function searchProcess(){
 									<th style="background-color: #eeeeee; text-align: center;">이름</th>
 									<th style="background-color: #eeeeee; text-align: center;">이메일</th>
 									<th style="background-color: #eeeeee; text-align: center;">소속</th>
+									<th style="background-color: #eeeeee; text-align: center;">감리원증 번호</th>
+									<th style="background-color: #eeeeee; text-align: center;">감리횟수</th>
+									<th style="background-color: #eeeeee; text-align: center;">총교육시간</th>
+									<th style="background-color: #eeeeee; text-align: center;">업데이트날짜</th>
 									<th style="background-color: #eeeeee; text-align: center;">감리인이력보기</th>
 									
 								</tr>
@@ -131,6 +135,10 @@ function searchProcess(){
 									<td><%= list.get(i).getUsername() %></td>
 									<td><%= list.get(i).getUseremail() %></td>
 									<td><%= list.get(i).getOrg() %></td>
+									<td><%= list.get(i).getAuditno() %></td>
+									<td><%= list.get(i).getCnt() %></td>
+									<td><%= list.get(i).getEdu() %></td>
+									<td><%= list.get(i).getUpdatedate() %></td>
 									<td><a href="auditorHistory.jsp?searchUserID=<%= list.get(i).getUserid() %>">보기</a></td>
 								</tr>
 						<%

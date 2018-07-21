@@ -63,7 +63,7 @@ public class UserDAO {
 	public int join(User user) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		String SQL = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String SQL = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(SQL);
@@ -76,6 +76,8 @@ public class UserDAO {
 			pstmt.setString(7, user.getBirth());
 			pstmt.setString(8, user.getOrg());
 			pstmt.setInt(9, 0);
+			pstmt.setString(10, "N");
+			pstmt.setString(11, user.getAuditno());
 			return pstmt.executeUpdate();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -95,7 +97,7 @@ public class UserDAO {
 	public int update(User user) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		String SQL = "UPDATE user SET userPassword = ? , userName = ? , userEmail = ?, userDept = ?, userLevel = ?, birth = ?, org = ? "
+		String SQL = "UPDATE user SET userPassword = ? , userName = ? , userEmail = ?, userDept = ?, userLevel = ?, birth = ?, org = ?, auditNo = ? "
 				+ " WHERE userID = ?";
 		
 		try {
@@ -108,7 +110,9 @@ public class UserDAO {
 			pstmt.setString(5, user.getUserlevel());
 			pstmt.setString(6, user.getBirth());
 			pstmt.setString(7, user.getOrg());
-			pstmt.setString(8, user.getUserid());
+			pstmt.setString(8, user.getAuditno());
+			
+			pstmt.setString(9, user.getUserid());
 			
 			return pstmt.executeUpdate();
 			
@@ -151,6 +155,8 @@ public class UserDAO {
 				user.setOrg(rs.getString(8));
 				user.setAvailable(rs.getInt(9));
 				user.setManager(rs.getString(10));
+				user.setAuditno(rs.getString(11));
+				user.setUpdatedate(rs.getString(12));
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -172,7 +178,10 @@ public ArrayList<User> search(String  userName){
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-		String SQL = "SELECT * FROM user WHERE userName like ?  ";
+		String SQL = "SELECT a.userID, a.userPassword, a.userName,a.userEmail,a.userDept,a.userLevel,a.birth,a.org,a.available,a.manager,a.auditNo,a.updateDate, "
+				+ " (select count(auditHistoryID) from auditHistory c where c.userID = a.userID ) cnt , "
+				+ " (select sum(eduTime) from edu d where d.userID = a.userID ) edu  "
+				+ " FROM user a WHERE userName like ?  ";
 		ArrayList<User> list = new ArrayList<User>();
 		
 		try {
@@ -193,6 +202,13 @@ public ArrayList<User> search(String  userName){
 				user.setBirth(rs.getString(7));
 				user.setOrg(rs.getString(8));
 				user.setAvailable(rs.getInt(9));
+				user.setManager(rs.getString(10));
+				user.setAuditno(rs.getString(11));
+				user.setUpdatedate(rs.getString(12));
+				
+				user.setCnt(rs.getString(13)); // 총 감리이력
+				user.setEdu(rs.getString(14)); // 총 교육이수시간
+				
 
 				list.add(user);
 			}
@@ -252,6 +268,36 @@ public ArrayList<User> search(String  userName){
 			}
 			return null;//
 		}
+		
+	
+		public int update(String userID) {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			//현재 시간으로 업데이트 하기..
+			String SQL = "UPDATE user SET updateDate = now()  "
+					+ " WHERE userID = ?";
+			
+			try {
+				conn = ds.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setString(1, userID);
+				
+				return pstmt.executeUpdate();
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					//if(rs!=null) rs.close();
+					if(pstmt !=null) pstmt.close();
+					if(conn!=null) conn.close();
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return -1 ; // 데이텁이스 오류
+		}
+		
 		
 		
 	

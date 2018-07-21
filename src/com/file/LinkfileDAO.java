@@ -54,6 +54,38 @@ public class LinkfileDAO {
 		return -1;
 	}
 	
+	
+	public int update(String fileName, String fileRealName,int linkFileID) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "UPDATE linkFile set fileName =? , realFileName= ? where linkFileID = ?";
+		try {
+			
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			
+			pstmt.setString(1, fileName);
+			pstmt.setString(2, fileRealName);
+			pstmt.setInt(3, linkFileID);
+			
+			return pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn!=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;
+	}
+	
+	
 	public int hit(String fileRealName) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;

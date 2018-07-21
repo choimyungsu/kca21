@@ -49,7 +49,34 @@
 					<div class="form-group">
                         <input type="text" class="form-control" placeholder="유사경력근거" name="similarcareer" maxlength="100">
                     </div>
-					
+			        <div class="form-group">
+                          <label class="control-label" for="bizoverview">사업관리(Risk,이슈,특징)</label>
+                          <br>
+                          <div>
+                          <textarea class="form-control" placeholder="글 내용" name="biz" maxlength="2000" style="height: 100px;" ></textarea>
+                          </div>
+                    </div>
+                    <div class="form-group">
+                          <label class="control-label" for="bizoverview">응용개발(업무,개발언어)</label>
+                          <br>
+                          <div>
+                          <textarea class="form-control" placeholder="글 내용" name="app" maxlength="2000" style="height: 100px;" ></textarea>
+                          </div>
+                    </div>
+                    <div class="form-group">
+                          <label class="control-label" for="bizoverview">데이터베이스(빅데이터,이관,DW)</label>
+                          <br>
+                          <div>
+                          <textarea class="form-control" placeholder="글 내용" name="db" maxlength="2000" style="height: 100px;" ></textarea>
+                          </div>
+                    </div>
+                    <div class="form-group">
+                          <label class="control-label" for="bizoverview">아키텍처(아키,인프라,네트워크,통신)</label>
+                          <br>
+                          <div>
+                          <textarea class="form-control" placeholder="글 내용" name="archi" maxlength="2000" style="height: 100px;" ></textarea>
+                          </div>
+                    </div>                 
 					
 					<input type="hidden" name="userid" value="<%= userID %>">
 					

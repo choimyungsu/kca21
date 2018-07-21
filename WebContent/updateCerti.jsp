@@ -88,8 +88,8 @@
                     <input type="hidden" name="userid" value="<%= userID %>">
                     <input type="hidden" name="certiid" value="<%= certiID %>">
                     
-                    <input type="submit" class="btn btn-primary form-control btn-sm" value="수정">
-                    <a href="deleteCertiAction.jsp?certiid=<%=certiID %>" class="btn btn-success btn-sm">삭제 </a>
+                    <input type="submit" class="btn btn-primary btn-sm" value="수정">
+                    <a href="deleteCertiAction.jsp?certiid=<%=certiID %>" class="btn btn-danger btn-sm pull-right">삭제 </a>
                     
                 </form>
             </div>

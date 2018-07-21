@@ -13,6 +13,10 @@
 <jsp:setProperty name="career" property="period" />
 <jsp:setProperty name="career" property="task" />
 <jsp:setProperty name="career" property="similarcareer" />
+<jsp:setProperty name="career" property="biz" />
+<jsp:setProperty name="career" property="app" />
+<jsp:setProperty name="career" property="db" />
+<jsp:setProperty name="career" property="archi" />
 
 <!DOCTYPE html>
 <html>
@@ -47,7 +51,7 @@
             }else{
                 
             	CareerDAO careerDAO = new CareerDAO();
-                int result = careerDAO.insertExcel(userID,career.getPeriod(),career.getCareerdesc(),career.getTask(),career.getSimilarcareer());
+                int result = careerDAO.insertExcel(userID,career.getPeriod(),career.getCareerdesc(),career.getTask(),career.getSimilarcareer(),career.getBiz(),career.getApp(),career.getDb(),career.getArchi());
                 
                 
                 if(result == -1){
@@ -59,7 +63,7 @@
                 }else{
                     PrintWriter script = response.getWriter();
                     script.println("<script>");
-                    script.println("location.href ='auditorHistory.jsp' ");
+                    script.println("location.href ='auditorHistory.jsp?tab=career' ");
                     script.println("</script>");
                 }
             }

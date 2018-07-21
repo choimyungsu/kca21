@@ -9,6 +9,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import com.user.UserDAO;
+
 public class EduDAO {
 
 	
@@ -143,7 +145,7 @@ public ArrayList<Edu> getList( String userid){
 		return null;//
 	}
 	
-	public int update(int eduID, String eduDesc, String eduTime, String eduPeriod,String eduAgency) {
+	public int update(int eduID, String eduDesc, String eduTime, String eduPeriod,String eduAgency, String userID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -166,6 +168,9 @@ public ArrayList<Edu> getList( String userid){
 			e.printStackTrace();
 		}finally {
 			try {
+				UserDAO userDAO = new UserDAO();
+				userDAO.update(userID);// user 업데이트 날짜 변경
+				
 				if(rs!=null) rs.close();
 				if(pstmt !=null) pstmt.close();
 				if(conn!=null) conn.close();

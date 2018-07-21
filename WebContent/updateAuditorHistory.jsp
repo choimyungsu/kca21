@@ -3,6 +3,8 @@
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="com.pms.AuditHistory" %>
 <%@ page import="com.pms.AuditHistoryDAO" %>
+<%@ page import="com.user.User" %>
+<%@ page import="com.user.UserDAO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,11 +76,12 @@
     }
     
     AuditHistory aaa = new AuditHistoryDAO().getAuditHistory(auditHistoryID);
+    User user = new UserDAO().userDetail(userID);
     
     System.out.println("userID========"+userID);
     System.out.println("aaa.getUserid()========"+aaa.getUserid());
     
-    if(!userID.equals(aaa.getUserid())){
+    if(!userID.equals(aaa.getUserid()) && !user.getManager().equalsIgnoreCase("Y")){
         
         PrintWriter script = response.getWriter();
         script.println("<script>");
@@ -92,45 +95,67 @@
 
 
     <div class="container">
-        <div class="col-lg-4"></div>
-        <div class="col-lg-4">
-            <div class="jumbortron" style="padding-top:20px;">
+        <div class="form-horizontal" >
+            <div style="padding-top:20px;">
                 <form method="post" action="updateAuditorHistoryAction.jsp">
-                    <h3 style="text-align; center;">감리인 이력 수정</h3>
+                    <h3 style="text-align:center;">감리인 이력 수정</h3>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth" >연도</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="연도" name="audityearmonth" maxlength="100" value="<%=aaa.getAudityearmonth() %>" >
+                        </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth">감리명</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="사업명" name="auditname" maxlength="100" value="<%=aaa.getAuditname() %>">
+                        </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth">주관기관</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="주관기관" name="mainclient" maxlength="100" value="<%=aaa.getMainclient() %>">
+                        </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth">공공/민간</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="공공/민간" name="maindivision" maxlength="100" value="<%=aaa.getMaindivision() %>">
+                        </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth">담당분야</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="담당분야" name="auditfield" maxlength="100" value="<%=aaa.getAuditfield() %>">
+                        </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth">역할</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="역할" name="auditrole" maxlength="100" value="<%=aaa.getAuditrole() %>">
+                        </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="audityearmonth">참여율</label>
+                        <div class="col-sm-10">
                         <input type="text" class="form-control" placeholder="참여율" name="joinrate" maxlength="100" value="<%=aaa.getJoinrate() %>">
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="expireDate" style="padding-right: 15px;">감리기간 </label>
-                        <div class="input-daterange date" id="datepicker1" style="width: 320px; display: inline-table;">
-                          <input type="text" class="form-control" id="sdate1" style="width: 115px;" name="auditstartdate" value="<%=aaa.getAuditstartdate() %>"/>
-                          <label class="date-range" for="sdate1">
-                            <i class="glyphicon glyphicon-calendar"></i>
-                          </label>
-                          <span style="display: table-cell; padding: 0px 10px;"> ~ </span>
-                          <input type="text" class="form-control" id="edate1" style="width: 115px; border-radius: 3px 0 0 3px;" name="auditenddate" value="<%=aaa.getAuditenddate() %>"/>
-                          <label class="date-range" for="edate1">
-                            <i class="glyphicon glyphicon-calendar"></i>
-                          </label>
+                        <label class="control-label col-sm-2" for="expireDate" style="padding-right: 15px;">감리기간 </label>
+                        <div class="col-sm-10">
+	                        <div class="input-daterange date" id="datepicker1" style="width: 320px; display: inline-table;">
+	                          <input type="text" class="form-control" id="sdate1" style="width: 115px;" name="auditstartdate" value="<%=aaa.getAuditstartdate() %>"/>
+	                          <label class="date-range" for="sdate1">
+	                            <i class="glyphicon glyphicon-calendar"></i>
+	                          </label>
+	                          <span style="display: table-cell; padding: 0px 10px;"> ~ </span>
+	                          <input type="text" class="form-control" id="edate1" style="width: 115px; border-radius: 3px 0 0 3px;" name="auditenddate" value="<%=aaa.getAuditenddate() %>"/>
+	                          <label class="date-range" for="edate1">
+	                            <i class="glyphicon glyphicon-calendar"></i>
+	                          </label>
+	                        </div>
                         </div>
                     </div> 
                     
@@ -138,11 +163,19 @@
                     <input type="hidden" name="userid" value="<%= userID %>">
                     <input type="hidden" name="audithistoryid" value="<%= auditHistoryID %>">
                     
-                    
-                    <input type="submit" class="btn btn-primary form-control btn-sm" value="수정">
-                    <a href="deleteAuditorHistoryAction.jsp?audithistoryid=<%=auditHistoryID %>" class="btn btn-success btn-sm">삭제 </a>
+                    <div class="row" >
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-2">
+                    <input type="submit" class="btn btn-primary btn-sm" value="수정">
+                    </div>
+                    <div class="col-sm-8">
+                    <a href="deleteAuditorHistoryAction.jsp?audithistoryid=<%=auditHistoryID %>" class="btn btn-danger btn-sm pull-right">삭제 </a>
+                    </div>
+                    </div>
                     
                 </form>
+                
             </div>
         </div>
     </div>

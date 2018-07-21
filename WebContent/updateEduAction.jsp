@@ -49,7 +49,7 @@
             }else{
                 
             	EduDAO eduDAO = new EduDAO();
-                int result = eduDAO.update(edu.getEduid(),edu.getEdudesc(),edu.getEdutime(),edu.getEduperiod(),edu.getEduagency());
+                int result = eduDAO.update(edu.getEduid(),edu.getEdudesc(),edu.getEdutime(),edu.getEduperiod(),edu.getEduagency(),userID);
                 
                 if(result == -1){
                     PrintWriter script = response.getWriter();
@@ -60,7 +60,7 @@
                 }else{
                     PrintWriter script = response.getWriter();
                     script.println("<script>");
-                    script.println("location.href ='auditorHistory.jsp' ");
+                    script.println("location.href ='auditorHistory.jsp?tab=edu' ");
                     script.println("</script>");
                 }
             }

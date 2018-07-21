@@ -55,7 +55,7 @@
             }else{
                 
             	AuditHistoryDAO auditHistoryDAO = new AuditHistoryDAO();
-                int result = auditHistoryDAO.update(auditHistory.getAudithistoryid(),auditHistory.getAudityearmonth(),auditHistory.getAuditname(),auditHistory.getMainclient(),auditHistory.getMaindivision(),auditHistory.getAuditfield(),auditHistory.getAuditrole(),auditHistory.getJoinrate(),auditHistory.getAuditstartdate(),auditHistory.getAuditenddate());
+                int result = auditHistoryDAO.update(auditHistory.getAudithistoryid(),auditHistory.getAudityearmonth(),auditHistory.getAuditname(),auditHistory.getMainclient(),auditHistory.getMaindivision(),auditHistory.getAuditfield(),auditHistory.getAuditrole(),auditHistory.getJoinrate(),auditHistory.getAuditstartdate(),auditHistory.getAuditenddate(),userID);
                 
                 if(result == -1){
                     PrintWriter script = response.getWriter();
@@ -66,7 +66,7 @@
                 }else{
                     PrintWriter script = response.getWriter();
                     script.println("<script>");
-                    script.println("location.href ='auditorHistory.jsp' ");
+                    script.println("location.href ='auditorHistory.jsp?tab=history' ");
                     script.println("</script>");
                 }
             }

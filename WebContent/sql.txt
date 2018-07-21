@@ -105,3 +105,107 @@ SELECT b.userName,a.auditHistoryID,a.auditYearMonth,a.auditName,a.mainClient,a.m
 FROM auditHistory a left outer join user b
 on a.userid = b.userid
 where a.auditName like '%서울%';
+
+
+
+
+ALTER TABLE `kca21`.`user` 
+ADD COLUMN `auditNo` VARCHAR(100) NULL DEFAULT NULL AFTER `manager`;
+
+
+
+CREATE TABLE auditReport
+(
+    `auditReportID`      INT              NOT NULL    AUTO_INCREMENT, 
+    `projectID`          INT              NULL, 
+    `seq`                VARCHAR(45)      NULL        COMMENT '순번', 
+    `auditName`          VARCHAR(200)     NULL        COMMENT '감리명', 
+    `placeAuditDate`     VARCHAR(200)     NULL        COMMENT '현장감리기간', 
+    `auditDate`          VARCHAR(100)     NULL        COMMENT '현장감리(사전,조치)', 
+    `auditors`           VARCHAR(500)     NULL        COMMENT '참여감리인', 
+    `auditField`         VARCHAR(1000)    NULL        COMMENT '담당분야', 
+    `contractAuditDate`  VARCHAR(100)     NULL        COMMENT '감리계약기간', 
+    `mainClient`         VARCHAR(100)     NULL        COMMENT '발주처', 
+    `developCompany`     VARCHAR(100)     NULL        COMMENT '피감리기관', 
+    `auditCost`          VARCHAR(100)     NULL        COMMENT '감리비', 
+    `developCost`        VARCHAR(100)     NULL        COMMENT '사업비', 
+    `developMethod`      VARCHAR(200)     NULL        COMMENT '개발방법론', 
+    `bizOverview`        VARCHAR(1000)    NULL        COMMENT '사업개요(목표)', 
+    `bizScope`           VARCHAR(1000)    NULL        COMMENT '사업범위(대상업무)', 
+    `bizPeriod`          VARCHAR(100)     NULL        COMMENT '사업기간', 
+    `mainTechnology`     VARCHAR(1000)    NULL        COMMENT '요소기술', 
+    `auditAvailable`     INT              NULL        COMMENT '삭제여부', 
+    `auditStartDate`     VARCHAR(50)      NULL, 
+    `auditEndDate`       VARCHAR(50)      NULL, 
+    `mainAuditor`        VARCHAR(10)      NULL, 
+    `auditStep`          VARCHAR(10)      NULL, 
+    `createDate`         VARCHAR(50)      NULL, 
+    `updateDate`         VARCHAR(50)      NULL, 
+    PRIMARY KEY (auditReportID)
+);
+
+ALTER TABLE auditReport COMMENT '사업수행이력';
+
+
+
+
+//제안서
+CREATE TABLE rfp
+(
+    `rfpID`    INT             NOT NULL    AUTO_INCREMENT, 
+    `rfpName`  VARCHAR(200)    NULL        COMMENT '제안요청서 제목', 
+    `dueDate`  VARCHAR(100)    NULL        COMMENT '제출일', 
+    `type`     VARCHAR(45)     NULL        COMMENT '온라인,발표', 
+    PRIMARY KEY (rfpID)
+);
+
+//제안서 제안인력
+CREATE TABLE rfpUserList
+(
+    `rfpUserListID`  INT             NOT NULL    AUTO_INCREMENT, 
+    `rfpID`          INT             NULL        COMMENT 'rfp키', 
+    `userID`         VARCHAR(20)     NULL        COMMENT '유저키', 
+    `auditField`     VARCHAR(100)    NULL        COMMENT '영역', 
+    PRIMARY KEY (rfpUserListID)
+);
+
+
+
+
+// 일정관리
+CREATE TABLE calendar
+(
+    `calendarID`  INT             NOT NULL    AUTO_INCREMENT, 
+    `id`          VARCHAR(45)     NULL        COMMENT '동일한 일정 묶음', 
+    `title`       VARCHAR(200)    NULL        COMMENT '일정명', 
+    `start`       DATETIME        NULL        COMMENT '시작일', 
+    `end`         DATETIME        NULL        COMMENT '종료일', 
+    `url`         VARCHAR(200)    NULL        COMMENT '연결주소', 
+    `userID`      VARCHAR(45)     NULL, 
+    PRIMARY KEY (calendarID)
+);
+
+
+
+
+// 조건...
+SELECT a.*,b.userName,b.auditNo,(select count(auditHistoryID) from audithistory c where c.userID = a.userID )   
+FROM rfpUserList a left join user b 
+on a.userID = b.userID 
+where a.rfpID=3;
+
+
+
+ALTER TABLE `kca21`.`career` 
+ADD COLUMN `biz` VARCHAR(2000) NULL COMMENT '사업관리,Risk,이슈' AFTER `similarCareer`,
+ADD COLUMN `app` VARCHAR(2000) NULL COMMENT '응용개발' AFTER `biz`,
+ADD COLUMN `db` VARCHAR(2000) NULL COMMENT '데이터베이스' AFTER `app`,
+ADD COLUMN `archi` VARCHAR(2000) NULL COMMENT '아키텍처' AFTER `db`;
+
+
+
+ALTER TABLE `kca21`.`user` 
+ADD COLUMN `updateDate` VARCHAR(50) NULL AFTER `auditNo`;
+
+
+

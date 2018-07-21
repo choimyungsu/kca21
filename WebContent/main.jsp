@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <jsp:include page="header.jsp" flush="true" />
+
+
 <title>감리 이력관리</title>
 
 <style>
@@ -33,8 +35,8 @@
     color: white;
     height: 400px;
 }
- </style>
 
+ </style>
 </head>
 <body>
 
@@ -46,13 +48,14 @@
 			<!-- <p> <a class="btn btn-primary btn-pull" href="#" role="button"> 감리인 이력</a> </p> -->
 			</div>
 		</div>
+		
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-12">
 				<h4> 수행감리 리포트  </h4>
 				<p> 제안서 작성시 이력사항을 찾아볼수 있도록 구성중입니다. 시범사이트 이므로 정식오픈시 공지드리도록 하겠습니다.</p>
-				<p> <a class="btn btn-default" data-target="#modal" data-toggle="modal">자세히 보기</a> </p>
+				<p> <a class="btn btn-danger" data-target="#modal" data-toggle="modal">오늘의 운세</a> </p>
 			</div>
-			<div class="col-md-4">
+			<!-- <div class="col-md-4">
 				<h4> 테스트  </h4>
 				<p> 제안서 작성시 이력사항을 찾아볼수 있도록 구성중입니다. 시범사이트 이므로 정식오픈시 공지드리도록 하겠습니다.</p>
 				<p> <a class="btn btn-default" href="#">자세히 보기</a> </p>
@@ -61,9 +64,11 @@
 				<h4> 테스트  </h4>
 				<p> 제안서 작성시 이력사항을 찾아볼수 있도록 구성중입니다. 시범사이트 이므로 정식오픈시 공지드리도록 하겠습니다.</p>
 				<p> <a class="btn btn-default" href="#">자세히 보기</a> </p>
-			</div>
+			</div> -->
 		</div>
 		<hr>
+		
+		
 		<!-- <div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -103,6 +108,7 @@
 				</div>
 			</div>
 		</div> -->
+	
 		
 
 	<div class="row">
@@ -110,13 +116,11 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						특징
+						제안서 받은날
 						<button class="colse" data-dismiss="modal">&times;</button>
 					</div>
 					<div class="modal-body" style="text-align: center;">
-						이 사이트의 특징은 aaaaaa <br>
-						aaddas <br><br>
-						<img src="images/youtube.png" id="imagepreview" style="width: 256px; height: 256px;">
+						<img src="img/aaa.jpg" id="imagepreview" style="width: 502px; height: 640px;">
 					</div>
 				</div>
 			</div>

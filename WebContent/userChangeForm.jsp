@@ -13,11 +13,14 @@
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.js"></script>
+
+<jsp:include page="header.jsp" flush="true" />
 
 <title>감리</title>
 </head>
 <body>
-<jsp:include page="header.jsp" flush="true" />
 
 <% 
     String userID = null;
@@ -40,8 +43,8 @@
     //user 테이블에서 해당 사용자 이미지 가져오기
     Linkfile fileDTO = userDAO.getFileInformation("user",userID);//
     
-    System.out.println("userID========"+userID);
-    System.out.println("user.getUserid()========"+user.getUserid());
+    //System.out.println("userID========"+userID);
+    //System.out.println("user.getUserid()========"+user.getUserid());
     
     if(!userID.equals(user.getUserid())){
         
@@ -85,10 +88,15 @@
 					<div class="form-group">
                                                         생년 <input type="text" class="form-control" placeholder="생년 ex)1960" name="userBirth" maxlength="20" value="<%=user.getBirth() %>">
                     </div>
+                    <div class="form-group">
+                                                        감리원증 번호 <input type="text" class="form-control" placeholder="정감협 제 1XXX호" name="auditNo" maxlength="20" value="<%=user.getAuditno() %>">
+                    </div>                    
 					
 					<div class="form-group">
 						<input type="file" name="file"><br>
-						<%= fileDTO.getFilename() %>
+						<% if(fileDTO !=null){ %>
+						  <%= fileDTO.getFilename() %>
+						<% } %>
 					</div>
 					<input type="hidden" name="userID" value="<%= userID %>">
 					<input type="submit" class="btn btn-primary form-control" value="회원정보 변경">

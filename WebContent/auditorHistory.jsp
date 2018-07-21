@@ -9,6 +9,7 @@
 <%@ page import="com.pms.Certi" %>
 <%@ page import="com.pms.EduDAO" %>
 <%@ page import="com.pms.Edu" %>
+<%@ page import="com.pms.AuditGroupCount" %>
 <%@ page import="com.file.Linkfile" %>
 <%@ page import="com.user.UserDAO" %>
 <%@ page import="com.user.User" %>
@@ -61,6 +62,8 @@
 	String userName =user.getUsername();// user명 가져오기
 	String userDept =user.getUserdept(); // 부서
 	String userLevel = user.getUserlevel();// 직급
+	String auditNo = user.getAuditno();//감리원증 번호
+	String updateDate = user.getUpdatedate(); // 최종업데이트 날짜 
 	//user 테이블에서 해당 사용자 이미지 가져오기
 	Linkfile fileDTO = userDAO.getFileInformation("user",searchUserID);//
 	
@@ -72,6 +75,12 @@
 	}
 	
 	Util util = new Util();
+	
+	String tab="";
+    if(request.getParameter("tab") !=null){
+	   tab = request.getParameter("tab");
+    }
+	
 
 %>
 
@@ -129,26 +138,26 @@
 <div id="exTab1" class="container-fluid"> 
 
         <ul  class="nav nav-tabs">
-            <li class="active">
+            <li <% if(tab.equals("")){ %> class="active" <% } %> >
                 <a  href="#1a" data-toggle="tab">인적사항</a>
             </li>
-            <li>
+            <li <% if(tab.equals("history")){ %>  class="active" <% } %>  >
                 <a href="#2a" data-toggle="tab">감리이력</a>
             </li>
-            <li>
+            <li <% if(tab.equals("career")){ %>  class="active" <% } %>>
                 <a href="#3a" data-toggle="tab">사업유관경력</a>
             </li>
-	        <li>
+	        <li <% if(tab.equals("certi")){ %>  class="active" <% } %>>
 	           <a href="#4a" data-toggle="tab">자격현황</a>
             </li>
-            <li>
+            <li <% if(tab.equals("edu")){ %>  class="active" <% } %>>
                <a href="#5a" data-toggle="tab">교육이수현황 </a>
             </li>
         </ul>
 
             <div class="tab-content">
             <!-- 감리인 인적사항  시작-->
-              <div class="tab-pane active" id="1a">
+              <div class="tab-pane <% if(tab.equals("")){ %> active <% } %> " id="1a">
                     <div id="demo1" >
 				        <div class="row" style="padding: 30px;">
 				           <br>
@@ -158,19 +167,105 @@
 	                                </div>
 	                                <div class="media-body">
 	                                    <div class="col-sm-2"><h4 class="media-heading"><%= userName %></h4><br>
-	                                    <%= userDept %><br> <%= userLevel %></div>
+	                                    <%= userDept %><br> <%= userLevel %> <br> 감리원증번호:<%=auditNo %> <br><br> 최종업데이트 날짜 <br><%=updateDate %></div>
 	                                    <div class="col-sm-10">
-	                                        <div id="columnchart_values" ></div>
+	                                        <!--Table-->
+									        <!-- <table class="table table-bordered"> -->
+									        <table id="tableData0" class="table table-striped table-bordered" cellspacing="0" width="100%">
+									            <!--Table head-->
+									            <thead>
+									                <tr>
+									                    <th>#</th>
+									                    <th>감리유형</th>
+									                    <th>건수</th>
+									                </tr>
+									            </thead>
+									            <!--Table head-->
+									            <!--Table body-->
+									            <tbody>
+									            <%
+									                    ArrayList<AuditGroupCount> list5 = auditHistoryDAO.getAuditFieldGroupList(searchUserID);
+									                    for(int i =0 ; i < list5.size(); i++){
+									            %>          
+									                            <tr>
+									                                <th scope="row"><%= i+1 %></th>
+									                                <td><%= list5.get(i).getAuditField() %></td>
+									                                <td><%= list5.get(i).getCount() %></td>
+									                            </tr>
+									            <% } %>             
+									            </tbody>
+						                        <!--Table body-->
+						                        <tfoot>
+					                                <tr>
+					                                    <th colspan="3" style="text-align:right">  전체: </th>
+					                                </tr>
+					                            </tfoot>
+						                    </table>
+						                    <!--Table-->
 	                                    </div>
 	                                    
 	                                </div>
 	                            </div>
+	                        </div>
+	                        <div class="row">
+			                      <div class="col-sm-2">
+			                      </div>
+	                              <div class="col-sm-10">
+	                               <div id="columnchart_values" ></div>
+			                     </div>
 	                        </div>                  
 	                    </div>
 	                </div>
+	                
+  <script>
+        
+        
+        $(document).ready(function() {  // 
+            $('#tableData0').DataTable( {
+                "paging":   false,
+                
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+         
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+         
+                    // Total over all pages
+                    total = api
+                        .column( 2 )  // 3번째 컬럼 지정 
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+         
+                    // Total over this page
+                    pageTotal = api
+                        .column( 2, { page: 'current'} )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+         
+                    // Update footer
+                    $( api.column( 2 ).footer() ).html(
+                        //'$'+pageTotal +' ( $'+ total +' total)'
+                            pageTotal +' ( '+ total +' total)'
+                    );
+                }
+            } );
+        } );
+        
+
+            
+        </script>	                
               <!-- 감리인 인적사항  끝-->
               <!-- 감리이력 시작-->
-              <div class="tab-pane" id="2a">
+              <div class="tab-pane <% if(tab.equals("history")){ %>  active <% } %> " id="2a">
                 <br>
                         <!-- <table  class="display" style="text-align: center; border: 1px solid #dddddd ;width:100%" id="tableData1" > -->
                         <table id="tableData1" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -247,7 +342,7 @@
             <!-- 감리이력 끝-->
          
             <!-- 사업유관경력 시작-->
-            <div class="tab-pane" id="3a">
+            <div class="tab-pane <% if(tab.equals("career")){ %> active <% } %>" id="3a">
                 <br>
                         <table class="table table-striped table-bordered" cellspacing="0" width="100%" id="tableData2">
                             <thead>
@@ -257,6 +352,10 @@
                                     <th style="background-color: #eeeeee; text-align: center;">참여기간</th>
                                     <th style="background-color: #eeeeee; text-align: center;">담당업무</th>
                                     <th style="background-color: #eeeeee; text-align: center;">유사경력근거</th>
+                                    <th style="background-color: #eeeeee; text-align: center;">사업관리</th>
+                                    <th style="background-color: #eeeeee; text-align: center;">응용</th>
+                                    <th style="background-color: #eeeeee; text-align: center;">DB</th>
+                                    <th style="background-color: #eeeeee; text-align: center;">아키텍처</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -271,6 +370,10 @@
                                     <td><%= util.changeStirng(list2.get(i).getPeriod()) %></td>
                                     <td align="left"><a href="updateCareer.jsp?careerID=<%= list2.get(i).getCareerid() %>"><%= list2.get(i).getTask() %></a></td>
                                     <td><%= util.changeStirng(list2.get(i).getSimilarcareer()) %></td>
+                                    <td><%= util.cutStirng(list2.get(i).getBiz(),20) %></td>
+                                    <td><%= util.cutStirng(list2.get(i).getApp(),20) %></td>
+                                    <td><%= util.cutStirng(list2.get(i).getDb(),20) %></td>
+                                    <td><%= util.cutStirng(list2.get(i).getArchi(),20) %></td>
                                 </tr>
                     <%
                         }
@@ -313,7 +416,7 @@
             <!-- 사업유관경력 끝-->    
              
              <!-- 자격현황 시작-->   
-             <div class="tab-pane" id="4a">
+             <div class="tab-pane <% if(tab.equals("certi")){ %> active <% } %>" id="4a">
                 <br>
                         <table class="table table-striped table-bordered" cellspacing="0" width="100%" id="tableData3">
                             <thead>
@@ -378,7 +481,7 @@
         <!-- 자격현황 끝-->
                
         <!-- 교육현황 시작-->
-         <div class="tab-pane" id="5a">
+         <div class="tab-pane <% if(tab.equals("edu")){ %> active <% } %>" id="5a">
                 <br>
                         <table class="table table-striped table-bordered" cellspacing="0" width="100%" id="tableData4">
                             <thead>
@@ -412,6 +515,13 @@
                             
                     %> 
                             </tbody>
+                            <tfoot>
+					            <tr>
+					                <th colspan="3" style="text-align:right">  교육시간: </th>
+					                <th></th>
+					                <th></th>
+					            </tr>
+					        </tfoot>
                           </table>
                     <a href="writeEdu.jsp" class="btn btn-primary pull-right">추가</a>
                     <button id='DLtoExcel-4'  class="btn btn-danger">Excel 저장</button>
@@ -469,7 +579,8 @@
          
                     // Update footer
                     $( api.column( 2 ).footer() ).html(
-                        '$'+pageTotal +' ( $'+ total +' total)'
+                        //'$'+pageTotal +' ( $'+ total +' total)'
+                    		pageTotal +' ( '+ total +' total)'
                     );
                 }
             } );

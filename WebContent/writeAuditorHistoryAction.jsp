@@ -50,7 +50,7 @@ if(request.getParameter("audityearmonth")!=null && request.getParameter("auditye
             script.println("location.href = 'login.jsp'");
             script.println("</script>");
         }else{
-        	System.out.println("auditHistory.getAudityearmonth()====>"+ auditHistory.getAudityearmonth() );
+        	//System.out.println("auditHistory.getAudityearmonth()====>"+ auditHistory.getAudityearmonth() );
             
             if(auditHistory.getAudityearmonth() == null || auditHistory.getAuditname() == null || auditHistory.getMainclient() == null || auditHistory.getMaindivision() == null
             		|| auditHistory.getAuditfield() == null || auditHistory.getAuditrole() == null || auditHistory.getJoinrate() == null) {

@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import com.pms.Certi;
+import com.user.UserDAO;
 
 public class CertiDAO {
 
@@ -178,7 +179,7 @@ public ArrayList<Certi> getList(String userid){
 		return null;//
 	}
 	
-	public int update(int certiID, String certiName, String issuer, String certiDivision,String certiField, String issueDate) {
+	public int update(int certiID, String certiName, String issuer, String certiDivision,String certiField, String issueDate, String userID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -204,6 +205,8 @@ public ArrayList<Certi> getList(String userid){
 			e.printStackTrace();
 		}finally {
 			try {
+				UserDAO userDAO = new UserDAO();
+				userDAO.update(userID);// user 업데이트 날짜 변경
 				if(rs!=null) rs.close();
 				if(pstmt !=null) pstmt.close();
 				if(conn!=null) conn.close();

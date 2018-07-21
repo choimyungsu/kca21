@@ -16,6 +16,60 @@ private String task;
 //  유사 경력의 근거
 private String similarcareer;
 
+//  사업관리
+private String biz;
+
+public String getBiz() {
+	return biz;
+}
+
+public void setBiz(String biz) {
+	this.biz = biz;
+}
+
+public String getApp() {
+	return app;
+}
+
+public void setApp(String app) {
+	this.app = app;
+}
+
+public String getDb() {
+	return db;
+}
+
+public void setDb(String db) {
+	this.db = db;
+}
+
+public String getArchi() {
+	return archi;
+}
+
+public void setArchi(String archi) {
+	this.archi = archi;
+}
+
+//  응용개발
+private String app;
+
+//  데이터베이스
+private String db;
+
+//  아키텍처
+private String archi;
+
+private String username;
+
+public String getUsername() {
+	return username;
+}
+
+public void setUsername(String username) {
+	this.username = username;
+}
+
 public Integer getCareerid() {
     return careerid;
 }

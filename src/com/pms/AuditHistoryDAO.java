@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import com.user.UserDAO;
 
 import com.pms.AuditHistory;
 import com.pms.AuditGroupCount;
@@ -308,7 +309,7 @@ public String getAuditFieldGroupJSON(String userid) {
 		return null;//
 	}
 	
-	public int update(int auditHistoryID, String auditYearMonth, String auditName, String mainClient,String mainDivision, String auditField, String auditRole, String joinRate,String auditStartDate, String auditEndDate ) {
+	public int update(int auditHistoryID, String auditYearMonth, String auditName, String mainClient,String mainDivision, String auditField, String auditRole, String joinRate,String auditStartDate, String auditEndDate,String userID ) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -338,6 +339,9 @@ public String getAuditFieldGroupJSON(String userid) {
 			e.printStackTrace();
 		}finally {
 			try {
+				UserDAO userDAO = new UserDAO();
+				userDAO.update(userID);// user 업데이트 날짜 변경
+				
 				if(rs!=null) rs.close();
 				if(pstmt !=null) pstmt.close();
 				if(conn!=null) conn.close();

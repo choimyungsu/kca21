@@ -7,6 +7,9 @@
 <%@ page import="com.excel.CareerExcelReader,com.pms.Career,com.pms.CareerDAO" %>
 <%@ page import="com.excel.CertiExcelReader,com.pms.Certi,com.pms.CertiDAO" %>
 <%@ page import="com.excel.EduExcelReader,com.pms.Edu,com.pms.EduDAO" %>
+<%@ page import="com.excel.UserExcelReader,com.user.User,com.user.UserDAO" %>
+<%@ page import="com.excel.AuditReportExcelReader,com.pms.AuditReport,com.pms.AuditReportDAO" %>
+
 <%@ page import="java.io.PrintWriter" %>
 </head>
 <body>
@@ -44,7 +47,7 @@ if(type.equals("A")){ // 이력 업로드
     List<AuditHistory> xlsxList;
     
     //xlsxList = excelReader.xlsxToDB("C:\\gamliexcel\\audit_cms.xlsx");// 
-    xlsxList = excelReader.xlsxToDB("/home/hosting_users/kca21/www/excel/audit_cms.xlsx");//
+    xlsxList = excelReader.xlsxToDB("/home/hosting_users/kca21/www/excel/audit_chkim.xlsx");//
     
     AuditHistoryDAO auditHistoryDAO = new AuditHistoryDAO();
     
@@ -71,7 +74,7 @@ if(type.equals("A")){ // 이력 업로드
     
     for(int i =0 ; i < xlsxList.size(); i++){
          
-    	careerDAO.insertExcel( xlsxList.get(i).getUserid(), xlsxList.get(i).getPeriod(), xlsxList.get(i).getCareerdesc(), xlsxList.get(i).getTask(), xlsxList.get(i).getSimilarcareer()) ;
+    	careerDAO.insertExcel( xlsxList.get(i).getUserid(), xlsxList.get(i).getPeriod(), xlsxList.get(i).getCareerdesc(), xlsxList.get(i).getTask(), xlsxList.get(i).getSimilarcareer(),xlsxList.get(i).getBiz(),xlsxList.get(i).getApp(),xlsxList.get(i).getDb(),xlsxList.get(i).getArchi()) ;
     	//(String userID, String period, String careerDesc, String task,String similarCareer) {
     }
 	
@@ -97,7 +100,7 @@ if(type.equals("A")){ // 이력 업로드
 	
 
 	
-}else{ // 교육이수 현왕 
+}else if(type.equals("D")){ // 교육이수 현왕 
 	
 	    EduExcelReader excelReader4 = new EduExcelReader();
 	    System.out.println("*****xlsx  *****");
@@ -119,7 +122,57 @@ if(type.equals("A")){ // 이력 업로드
 	    }
 	
 	
+}else if(type.equals("E")){ // user 
+	
+	 UserExcelReader excelReader5 = new UserExcelReader();
+     System.out.println("*****xlsx  *****");
+     System.out.println("*****realpath  *****"+ request.getSession().getServletContext().getRealPath("/"));
+     
+     List<User> xlsxList;
+     
+     //xlsxList = excelReader5.xlsxToDB("C:\\gamliexcel\\userall_test.xlsx");// 
+     xlsxList = excelReader5.xlsxToDB("/home/hosting_users/kca21/www/excel/userall_test.xlsx");//
+     
+     UserDAO userDAO = new UserDAO();
+     
+     for(int i =0 ; i < xlsxList.size(); i++){
+          
+    	 //userDAO.join( xlsxList.get(i).getUserid(), xlsxList.get(i).getUserpassword(), xlsxList.get(i).getUsername(), xlsxList.get(i).getUseremail(), xlsxList.get(i).getUserdept(), xlsxList.get(i).getUserlevel(), xlsxList.get(i).getBirth(), xlsxList.get(i).getOrg()) ;
+    	 userDAO.join( xlsxList.get(i));
+             
+     }
+	
+	
+}else if(type.equals("F")){ // 감리보고서
+	
+    AuditReportExcelReader excelReader6 = new AuditReportExcelReader();
+    System.out.println("*****xlsx  *****");
+    System.out.println("*****realpath  *****"+ request.getSession().getServletContext().getRealPath("/"));
+    
+    List<AuditReport> xlsxList;
+    
+    //xlsxList = excelReader6.xlsxToDB("C:\\gamliexcel\\audit_report.xlsx");// 
+    xlsxList = excelReader6.xlsxToDB("/home/hosting_users/kca21/www/excel/audit_report-1.xlsx");//
+    
+    AuditReportDAO auditReportDAO = new AuditReportDAO();
+    
+    for(int i =0 ; i < xlsxList.size(); i++){
+         
+        auditReportDAO.insert(xlsxList.get(i));
+            
+    }
+
+	
+}else{
+	
+	PrintWriter script = response.getWriter();
+	script.println("<script>");
+	script.println("alert(' type 설정 오류 ')");
+	script.println("location.href = 'main.jsp'");
+	script.println("</script>");
+
 }
+	    
 //out.println("정상적으로 업로드 하였습니다.");
 PrintWriter script = response.getWriter();
 script.println("<script>");

@@ -51,7 +51,7 @@
             }else{
                 
             	CertiDAO certiDAO = new CertiDAO();
-                int result = certiDAO.update(certi.getCertiid(),certi.getCertiname(),certi.getIssuer(),certi.getCertidivision(),certi.getCertifield(),certi.getIssuedate());
+                int result = certiDAO.update(certi.getCertiid(),certi.getCertiname(),certi.getIssuer(),certi.getCertidivision(),certi.getCertifield(),certi.getIssuedate(),userID);
                 
                 
                 if(result == -1){
@@ -63,7 +63,7 @@
                 }else{
                     PrintWriter script = response.getWriter();
                     script.println("<script>");
-                    script.println("location.href ='auditorHistory.jsp' ");
+                    script.println("location.href ='auditorHistory.jsp?tab=certi' ");
                     script.println("</script>");
                 }
             }

@@ -3,6 +3,7 @@
 <%@ page import="com.user.UserDAO" %>
 <%@ page import="com.user.User" %>
 <%@ page import="java.io.PrintWriter" %>
+<%@ page import="com.file.Linkfile" %>
 <%@ page import="com.file.LinkfileDAO" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.Enumeration" %>
@@ -21,9 +22,9 @@
 </head>
 <body>
 	<%
-		    String directory = "C:\\JSP\\projects\\kca21\\WebContent\\userImages\\"; // 로컬PC 
+		    //String directory = "C:\\JSP\\projects\\kca21\\WebContent\\userImages\\"; // 로컬PC 
 	        System.out.println("*****realpath  *****"+ request.getSession().getServletContext().getRealPath("/"));
-            //String directory = "/home/hosting_users/kca21/www/userImages/"; // 서버 
+            String directory = "/home/hosting_users/kca21/www/userImages/"; // 서버 
 			int maxSize = 1024*1024*100;
 			String encoding ="UTF-8";
 			
@@ -45,6 +46,7 @@
 				user.setUserlevel(multipartRequest.getParameter("userLevel"));
 				user.setOrg(multipartRequest.getParameter("org"));
 				user.setBirth(multipartRequest.getParameter("userBirth"));
+				user.setAuditno(multipartRequest.getParameter("auditNo"));
 			
 				UserDAO userDAO = new UserDAO();
 				int result = userDAO.update(user);
@@ -63,7 +65,7 @@
 			
 		//MultipartRequest multipartRequest = new MultipartRequest(request,directory,maxSize,encoding,
 		//new DefaultFileRenamePolicy());
-		// 기존 파일 삭제 처리 로직 추가 필요
+		
 
 		Enumeration fileNames = multipartRequest.getFileNames();
 
@@ -78,19 +80,47 @@
 
 			if(fileName == null) continue;//중간에 문서를 올리지 않은 항목에 대한 처리 
 			
-			if(!fileName.endsWith(".doc") && !fileName.endsWith(".hwp") && !fileName.endsWith(".pdf") && !fileName.endsWith(".xls")  && !fileName.endsWith(".ppt") && !fileName.endsWith(".jpg"))
-			{ // 시큐어 코딩 적용( 업로드 확장자 지정)
-				File file = new File(directory+fileRealName);
-				file.delete();
-				out.write("올릴수 없는 파일입니다.");
-				
-			} else {
+			// 기존 파일 삭제 처리 로직 추가   시작
+			Linkfile fileDTO = userDAO.getFileInformation("user",multipartRequest.getParameter("userID"));//
+			if(fileDTO!=null && fileDTO.getLinkfileid() != null )
+			{
+                if(!fileName.endsWith(".doc") && !fileName.endsWith(".hwp") && !fileName.endsWith(".pdf") && !fileName.endsWith(".xls")  && !fileName.endsWith(".ppt") && !fileName.endsWith(".jpg"))
+                { // 시큐어 코딩 적용( 업로드 확장자 지정)
+                    File file = new File(directory+fileRealName);
+                    file.delete();
+                    out.write("올릴수 없는 파일입니다.");
+                    System.out.println("cms===1");
+                                    
+                } else {
 
-				new LinkfileDAO().upload(fileName, fileRealName, filePath, objectLink, objectLinkPK);
-				out.write("fileNAme="+ fileName +", fileRealName="+fileRealName);
+                    File file = new File(directory+fileDTO.getRealfilename());//기존 저장된 파일을 지운다.
+                    file.delete();
+                    new LinkfileDAO().update(fileName, fileRealName,fileDTO.getLinkfileid()); //DB 업데이트 
+                    out.write("fileNAme="+ fileName +", fileRealName="+fileRealName);
+                    System.out.println("cms===2");
+                }
+
 				
+			}else{ // 기존에 파일이 들록 되어 있지 않으면 
 				
+				if(!fileName.endsWith(".doc") && !fileName.endsWith(".hwp") && !fileName.endsWith(".pdf") && !fileName.endsWith(".xls")  && !fileName.endsWith(".ppt") && !fileName.endsWith(".jpg"))
+	            { // 시큐어 코딩 적용( 업로드 확장자 지정)
+	                File file = new File(directory+fileRealName);
+	                file.delete();
+	                out.write("올릴수 없는 파일입니다.");
+	                System.out.println("cms===3");
+	                                
+	            } else {
+
+	                new LinkfileDAO().upload(fileName, fileRealName, filePath, objectLink, objectLinkPK);
+	                out.write("fileNAme="+ fileName +", fileRealName="+fileRealName);
+	                System.out.println("cms===4");
+	                
+	                
+	            }
 			}
+			
+			
 			
 			
 		}
