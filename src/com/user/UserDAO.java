@@ -63,7 +63,7 @@ public class UserDAO {
 	public int join(User user) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		String SQL = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String SQL = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,now() )";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(SQL);
