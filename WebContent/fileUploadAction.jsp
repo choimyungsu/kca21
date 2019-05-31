@@ -43,6 +43,8 @@
 		Enumeration fileNames = multipartRequest.getFileNames();
 		String path="";
 		String type= multipartRequest.getParameter("type");
+		String alldelete = multipartRequest.getParameter("alldelete");
+		System.out.println("alldelete==>"+alldelete);
 
 		while(fileNames.hasMoreElements()){
 			
@@ -79,7 +81,15 @@ if(type.equals("A")){ // 이력 업로드
     xlsxList = excelReader.xlsxToDB(path);//
     AuditHistoryDAO auditHistoryDAO = new AuditHistoryDAO();
     
+    
+    
+    
     for(int i =0 ; i < xlsxList.size(); i++){
+    	
+    	if(alldelete!=null && alldelete.equals("on") && i==0){// 이전데이를 모두 삭제한다고 체크한 경우 해당 유저로 저장된 기록은 모두 삭제
+            auditHistoryDAO.deleteAll(xlsxList.get(i).getUserid());
+        }
+    	
         auditHistoryDAO.insertExcel( xlsxList.get(i).getUserid(), xlsxList.get(i).getAudityearmonth(), xlsxList.get(i).getAuditname(), xlsxList.get(i).getMainclient(), xlsxList.get(i).getMaindivision(), xlsxList.get(i).getAuditfield(), xlsxList.get(i).getAuditrole() , xlsxList.get(i).getJoinrate()) ;
     }
     
@@ -92,6 +102,10 @@ if(type.equals("A")){ // 이력 업로드
     CareerDAO careerDAO = new CareerDAO();
     
     for(int i =0 ; i < xlsxList.size(); i++){
+    	if(alldelete!=null && alldelete.equals("on") && i==0){// 이전데이를 모두 삭제한다고 체크한 경우 해당 유저로 저장된 기록은 모두 삭제
+    		careerDAO.deleteAll(xlsxList.get(i).getUserid());
+    	
+        }
         careerDAO.insertExcel( xlsxList.get(i).getUserid(), xlsxList.get(i).getPeriod(), xlsxList.get(i).getCareerdesc(), xlsxList.get(i).getTask(), xlsxList.get(i).getSimilarcareer(),xlsxList.get(i).getBiz(),xlsxList.get(i).getApp(),xlsxList.get(i).getDb(),xlsxList.get(i).getArchi()) ;
     }
     
@@ -104,6 +118,10 @@ if(type.equals("A")){ // 이력 업로드
     CertiDAO ceritDAO = new CertiDAO();
     
     for(int i =0 ; i < xlsxList.size(); i++){
+    	
+    	if(alldelete!=null && alldelete.equals("on") && i==0){// 이전데이를 모두 삭제한다고 체크한 경우 해당 유저로 저장된 기록은 모두 삭제
+    		ceritDAO.deleteAll(xlsxList.get(i).getUserid());
+        }
         ceritDAO.insertExcel( xlsxList.get(i).getUserid(), xlsxList.get(i).getCertiname(), xlsxList.get(i).getIssuer(), xlsxList.get(i).getCertidivision(), xlsxList.get(i).getCertifield()) ;
     }
     
@@ -118,6 +136,10 @@ if(type.equals("A")){ // 이력 업로드
         EduDAO eduDAO = new EduDAO();
         
         for(int i =0 ; i < xlsxList.size(); i++){
+        	if(alldelete!=null && alldelete.equals("on") && i==0){// 이전데이를 모두 삭제한다고 체크한 경우 해당 유저로 저장된 기록은 모두 삭제
+        		eduDAO.deleteAll(xlsxList.get(i).getUserid());
+            }
+        	
             eduDAO.insertExcel( xlsxList.get(i).getUserid(), xlsxList.get(i).getEdudesc(), xlsxList.get(i).getEdutime(), xlsxList.get(i).getEduperiod(), xlsxList.get(i).getEduagency()) ;
         }
     

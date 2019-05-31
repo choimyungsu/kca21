@@ -116,6 +116,10 @@ public class UserExcelReader {
 
 									case 7: // birth
 										vo.setBirth(value);
+										break;
+										
+									case 8: // auditNo
+										vo.setAuditno(value);
 										break;	
 										
 										

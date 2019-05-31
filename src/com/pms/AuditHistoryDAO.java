@@ -12,6 +12,7 @@ import com.user.UserDAO;
 
 import com.pms.AuditHistory;
 import com.pms.AuditGroupCount;
+import com.util.Util;
 
 public class AuditHistoryDAO {
 
@@ -73,7 +74,44 @@ public ArrayList<AuditHistory> getList(String userid){
 		}
 		return list;//
 	}
+
+
+public String getListJSON(String userid){
 	
+	ArrayList<AuditHistory> list = new ArrayList<AuditHistory>();
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	String jsonData="";
+	String SQL = "SELECT * FROM auditHistory WHERE userID = ? ORDER BY auditYearMonth DESC ";
+	
+	try {
+		conn = ds.getConnection();
+		pstmt  = conn.prepareStatement(SQL);
+		pstmt.setString(1, userid);
+		
+		rs = pstmt.executeQuery();
+		Util util = new Util();
+		jsonData = util.getJSONFromResultSet(rs,"gridData");// 공통함수 호출
+		
+	}catch(Exception e) {
+		e.printStackTrace();
+	}finally {
+		try {
+			if(rs!=null) rs.close();
+			if(pstmt !=null) pstmt.close();
+			if(conn!=null) conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	return jsonData;//
+}
+
+
+
+
+
 public ArrayList<AuditHistory> likeSearchAuditorHistoryList(String search){
 		
 		ArrayList<AuditHistory> list = new ArrayList<AuditHistory>();
@@ -382,6 +420,34 @@ public String getAuditFieldGroupJSON(String userid) {
 		
 	}
 
+	public int deleteAll(String userID) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "Delete from auditHistory WHERE userID = ?";
+		
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			
+			pstmt.setString(1, userID);
+			return pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn!=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;//데이터베이스 오류
+		
+	}
+	
 	
 	
 }

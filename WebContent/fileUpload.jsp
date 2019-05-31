@@ -59,7 +59,10 @@ if(userID == null){
                 <div class="panel-body">
 					<div class="row" style="padding-left:20px;">
 						<form method="post" action="fileUploadAction.jsp" enctype="multipart/form-data">
-						
+						       <div class="form-group">
+                                    <input type=checkbox name="alldelete" id="alldelete" > 이전데이터 전체삭제
+                                    
+                                </div>
 						       <div class="form-group">
 			                        <input type=radio name="type" id="type" value="A"> 감리이력
 			                        <input type=radio name="type" id="type" value="B"> 사업유관경력

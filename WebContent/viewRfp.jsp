@@ -13,15 +13,24 @@
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
-
-
-
+<link rel="stylesheet" type="text/css" href="css/tui-example-style.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
 <title>변경</title>
 </head>
 <body>
 
+
 <jsp:include page="header.jsp" flush="true" />
 
+<!-- TOAST UI 적용  2019.01.03 CDN 적용 start 위치 중요!! jquery 밑으로.. -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
+<script src="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.js"></script>
+<script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.js"></script>
+<script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 <% 
     String userID = null;
     if(session.getAttribute("userID") !=null ){
@@ -126,6 +135,7 @@
 	                            <tbody>
 	                    <%
 	                         ArrayList<Rfpuserlist> list = new RfpuserlistDAO().getList(rfpid);
+	                    
 	                        for(int i =0 ; i < list.size(); i++){
 	                            //int j = i +1 ;
 	                    %>
@@ -156,7 +166,20 @@
 	                            <input type="hidden" name="auditfield" value="">
 	                    
 	                    </div>
+	                    <% 
+	                      
+	                        String jsonString = new RfpuserlistDAO().getListJSON(rfpid);
 	                    
+	                    %>
+	                    <%-- <%= jsonString  %> --%>
+	                    <div id="grid"></div>
+	                    <div id="paginextr" style="float:right; margin-top:20px;"></div>
+                        <div id="pagination" class="tui-pagination"></div>
+	                    <input type="button"  onclick="fn_add()" class="btn btn-primary btn-sm" value="행추가">
+	                    <input type="button"  onclick="fn_copy()" class="btn btn-primary btn-sm" value="행복사">
+	                    <input type="button"  onclick="fn_remove()" class="btn btn-primary btn-sm" value="행삭제">
+	                    <input type="button"  onclick="fn_save()" class="btn btn-primary btn-sm" value="저장">
+	                    <input type="button"  onclick="fn_delete2()" class="btn btn-primary btn-sm" value="삭제">
 
                     </form>
                 </div>
@@ -209,10 +232,219 @@
 
         }
         
+      
+        
+        /* 2019.01.03 toast 관련 추가 시작 */
         
         
+
+
+        /* jquery 사용시 활용 */
+        function goJquery2(doUrl, formData, type, callback){
+            //alert(doUrl);
+            
+            //formData += "&insert_user=&insert_user_name="; 
+            
+            $.ajax({
+                method: type,
+                url: doUrl,
+                data: formData,
+                beforeSend: function( xhr ) {
+                    //xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+                    hideShowColumn('hide');
+                }
+            })
+            .done(function( msg ) {
+                if( msg != null ){
+                    
+                    //hideShowColumn('hide');
+                    
+                    if( JSON.parse(msg).msg != null ){              
+                        alert( JSON.parse(msg).msg );
+                    }
+                    if( JSON.parse(msg).process == "success" ){
+                        goSearch();
+                    }
+                    if( JSON.parse(msg).rows != null ){
+                        //gridData = JSON.stringify(JSON.parse(msg).rows);
+                        //alert(msg);
+                        //alert(JSON.parse(msg).rows[0]);
+                        gridData = JSON.parse(msg).rows;
+                        //alert(gridData);
+                        //alert(JSON.parse(msg).paginationInfo.totalRecordCount);
+                        $('#rows').val(JSON.parse(msg).paginationInfo.recordCountPerPage);
+                        $('#page').val(JSON.parse(msg).paginationInfo.currentPageNo);
+                        $('#totalCnt').val(JSON.parse(msg).paginationInfo.totalRecordCount);
+                    }
+                }
+                
+                if(typeof callback === 'function') {
+                    callback();
+                }
+            });
+        }
+
+        function goExcel(){
+            //document.form1.action = "/grid/excelData2.do";
+            //document.form1.submit();
+            
+            $('.wrap-loading').removeClass('display-none');
+            setTimeout("goExcel2();", 1000);
+            setTimeout("goExcel3();", $('#totalCnt').val()/9*2);
+        }
+        function goExcel2(){    
+            document.form1.action = "/grid/excelData2.do";
+            document.form1.submit();
+            
+            //var form = "<form id='xlsForm' action=\"/grid/excelData2.do\" method='post'>";
+            //form += "</form>"; 
+            //jQuery(form).appendTo("body").submit().remove();
+        }
+        function goExcel3(){    
+            $('.wrap-loading').addClass('display-none');
+        }
+
+        function fn_save2(){    
+            
+            if( !grid.isModified() ){
+                alert("저장할 데이터가 없습니다.");
+                return false;
+            }
+            
+            if( !fn_check() ){
+                return false;
+            }
+
+            if(!confirm("저장하시겠습니까?")){
+                return false;
+            }
+             
+            $('.wrap-loading').removeClass('display-none');
+            hideShowColumn('show');
+            var url = "/grid/gridSaveBatch.do";
+            goJquery2(url,$("#searchVO").serialize(),'post', function(){
+                $('.wrap-loading').addClass('display-none');
+            });
+        }
+
+        function fn_check(){
+            
+            var ids = grid.getRows();
+            //alert(ids.length);
+           
+            for(var i=0; i<ids.length; i++){
+                if( ids[i].selectline != 'A' && ids[i].selectline != 'M' ){
+                    continue;
+                }
+                
+                if( ids[i].inout == '' ){
+                    alert("입출고구분은 필수항목입니다.");
+                    grid.focus(i,'inout');
+                    return false;
+                }
+                
+                if( ids[i].ymd == '' ){
+                    alert("일자는 필수항목입니다.");
+                    grid.focus(i,'ymd');
+                    return false;
+                }
+                
+                if( ids[i].num == '' ){
+                    alert("번호는 필수항목입니다.");
+                    grid.focus(i,'num');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        
+        function fn_add(){
+            grid.appendRow();
+        }
+
+        function fn_remove(){
+        	grid.removeCheckedRows();
+        }
+        
+        function fn_copy(){
+            var rowData = grid.getCheckedRows();
+            grid.appendRow(rowData,{at:rowData.rowKey+1});
+        }
+        
+        function fn_save(){ 
+        	
+       	  grid.use('Net', {
+       	        //perPage: 3,
+       	        updateDataMethod: 'POST',
+       	        api: {
+       	            //updateData: 'updateTest.jsp' // url 
+       	            updateData: './RfpuserRegServlet' // 서블릿으로 변경
+       	        }
+       	    });
+       	  
+        	var net = grid.getAddOn('Net');
+        	net.request('updateData'); // Send a request to '/api/updateData'
+        	
+        	//alert(net.request('updateData'));
+        	
+        }
+
+
+
+        
+        /* 2019.01.03 toast 관련 추가 끝 */
         
 </script>
+ <script type="text/javascript">
+
+  var grid = new tui.Grid({
+      el: $('#grid'),
+      scrollX: false,
+      scrollY: false,
+      rowHeaders: ['checkbox'],//체크박스 추가
+      pagination: true,
+      columns: [
+          {
+              title: '아이디',
+              name: 'userID',
+          },
+          {
+              title: '이름',
+              name: 'userName',
+          },
+          {
+              title: '감리원번호',
+              name: 'auditNo',
+          },
+          {
+              title: '총감리건수',
+              name: 'cnt',
+          },
+          {
+              title: '담당영역',
+              name: 'auditField',
+              
+              editOptions: {
+                  type: 'text',
+                  maxLength: 10,
+                  useViewMode: false
+              }
+          }
+      ]
+  });
+  
+  
+  //gridData :json 형태 값  
+  var json = <%= jsonString  %> ; // 아래와 같은 형태로 반환됨.그래서 gridData 값만 추출이 필요함.
+  //{"gridData":[{"userID":"aoj","rfpUserListID":"12","cnt":"2","eduTime":"","auditField":"총괄'감리원","auditNo":"","userName":"안옥정","rfpID":"3"},{"userID":"cms","rfpUserListID":"13","cnt":"45","eduTime":"95","auditField":"응용","auditNo":"정감협 제1767호","userName":"최명수","rfpID":"3"},{"userID":"bjhbc","rfpUserListID":"14","cnt":"0","eduTime":"","auditField":"","auditNo":"","userName":"백준환","rfpID":"3"},{"userID":"bscho","rfpUserListID":"15","cnt":"0","eduTime":"","auditField":"","auditNo":"","userName":"조범순","rfpID":"3"}]}
+  //var text1 = json.gridData; 
+  grid.setData(json.gridData); // 값만 추출하기
+  <%-- // grid.setData(<%= jsonString  %>); --%>
+
+  
+  </script>
     
 </body>
     

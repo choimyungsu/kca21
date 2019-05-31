@@ -61,7 +61,7 @@ function searchProcess(){
 	if(request.getParameter("pageNumber") !=null){
 		pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 	}
-	
+	String loginUser = "";
 
 	
 	String searchUserID = null;
@@ -79,6 +79,8 @@ function searchProcess(){
 		script.println("alert(' 로그인을 하세요.')");
 		script.println("location.href = 'main.jsp'");
 		script.println("</script>");
+	}else{
+		loginUser = (String) session.getAttribute("userID");
 	}
 	
 	String searUserName = "";
@@ -139,7 +141,12 @@ function searchProcess(){
 									<td><%= list.get(i).getCnt() %></td>
 									<td><%= list.get(i).getEdu() %></td>
 									<td><%= list.get(i).getUpdatedate() %></td>
-									<td><a href="auditorHistory.jsp?searchUserID=<%= list.get(i).getUserid() %>">보기</a></td>
+									<td>
+									   <a href="auditorHistory.jsp?searchUserID=<%= list.get(i).getUserid() %>">보기</a>
+									   <% if(loginUser.equals("cms")){  %>
+									      &nbsp; <a href="auditorHistoryToast.jsp?searchUserID=<%= list.get(i).getUserid()%>&tab=history">수정</a>
+									   <%} %>
+									</td>
 								</tr>
 						<%
 						

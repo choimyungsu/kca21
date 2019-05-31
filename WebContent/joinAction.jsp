@@ -9,6 +9,7 @@
 <%@ page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy" %>
 <%@ page import="com.oreilly.servlet.MultipartRequest" %>
 
+
 <%
 	request.setCharacterEncoding("UTF-8");
 %>
@@ -21,9 +22,9 @@
 </head>
 <body>
 	<%
-		    //String directory = "C:\\JSP\\projects\\kca21\\WebContent\\userImages\\"; // 로컬PC 
+		    String directory = "C:\\JSP\\projects\\kca21\\WebContent\\userImages\\"; // 로컬PC 
 	        System.out.println("*****realpath  *****"+ request.getSession().getServletContext().getRealPath("/"));
-            String directory = "/home/hosting_users/kca21/www/userImages/"; // 서버 
+            //String directory = "/home/hosting_users/kca21/www/userImages/"; // 서버 
 			int maxSize = 1024*1024*100;
 			String encoding ="UTF-8";
 			

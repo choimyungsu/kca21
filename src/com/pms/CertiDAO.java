@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import com.pms.Certi;
 import com.user.UserDAO;
+import com.util.Util;
 
 public class CertiDAO {
 
@@ -66,6 +67,39 @@ public ArrayList<Certi> getList(String userid){
 		}
 		return list;//
 	}
+
+
+public String getListJSON(String userid){
+	
+	//ArrayList<Career> list = new ArrayList<Career>();
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	String jsonData="";
+	String SQL = "SELECT * FROM certi WHERE userid = ? ORDER BY certiID DESC";
+	
+	try {
+		conn = ds.getConnection();
+		pstmt  = conn.prepareStatement(SQL);
+		pstmt.setString(1, userid);
+		
+		rs = pstmt.executeQuery();
+		Util util = new Util();
+		jsonData = util.getJSONFromResultSet(rs,"gridData");// 공통함수 호출
+		
+	}catch(Exception e) {
+		e.printStackTrace();
+	}finally {
+		try {
+			if(rs!=null) rs.close();
+			if(pstmt !=null) pstmt.close();
+			if(conn!=null) conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	return jsonData;//
+}
 	
 //insert(엑셀)
 	public int insertExcel(String userID, String certiName, String issuer, String certiDivision,String certiField) {
@@ -247,6 +281,33 @@ public ArrayList<Certi> getList(String userid){
 		
 	}
 	
+	public int deleteAll(String userID) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "Delete from certi WHERE userID = ?";
+		
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			
+			pstmt.setString(1, userID);
+			return pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn!=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;//데이터베이스 오류
+		
+	}
 	
 	
 }

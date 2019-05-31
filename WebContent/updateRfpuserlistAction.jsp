@@ -5,6 +5,25 @@
 
 <%
 	request.setCharacterEncoding("UTF-8");
+   //System.out.println("aaaaa");
+   System.out.println("updateData==>"+ request.getParameter("updatedRows"));
+   
+   response.setContentType("text/hteml;charset=UTF-8");
+   response.sendRedirect("{\"result\": true,  \"data\": {} }");
+   // return response;
+   //response.addHeader("responseData", "{\"result\": true,  \"data\": {}	}");
+   
+   
+
+/*
+  return response.send({
+    result: true,
+    data: {}
+  });
+
+   
+   */
+   
 %>
 
 <jsp:useBean id="rfpuserlist" class="com.rfp.Rfpuserlist" scope="page" />
@@ -61,6 +80,8 @@
                     script.println("<script>");
                     script.println("location.href ='viewRfp.jsp?rfpid="+rfpuserlist.getRfpid()+"'");
                     script.println("</script>");
+                    
+                    
                 }
             }
         }
